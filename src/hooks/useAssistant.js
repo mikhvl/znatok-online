@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createSmartappDebugger, createAssistant } from '@salutejs/client';
 
-export function useAssistant() {
+// Добавлен параметр onBackendAction для обработки команд от сервера
+export function useAssistant(onBackendAction) {
   const assistantRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
   const [character, setCharacter] = useState('joy');
@@ -24,6 +25,10 @@ export function useAssistant() {
         if (command.type === 'character') {
           setCharacter(command.character?.id || 'joy');
         }
+        // Ловим действия от бэкенда (start_game, restart_game и т.д.)
+        if (command.type === 'smart_app_data' && typeof onBackendAction === 'function') {
+          onBackendAction(command.smart_app_data || command.action);
+        }
       });
 
       assistantRef.current = assistant;
@@ -31,11 +36,10 @@ export function useAssistant() {
 
     init();
     return () => assistantRef.current?.close();
-  }, []);
+  }, [onBackendAction]);
 
   const sendData = useCallback((action) => {
     if (assistantRef.current) {
-      // Формат действия полностью соответствует ожиданиям DSL ($context.request.data.eventData)
       assistantRef.current.sendData({ action: { type: action.type, eventData: action.eventData || {} } });
     }
   }, []);
