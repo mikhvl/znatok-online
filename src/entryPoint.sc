@@ -9,7 +9,7 @@ patterns:
 theme: /
 
     state: Start
-        q!: $regex</start>
+        q!: $regexp</start>
         q!: (* ~Запустить * * | * ~Активировать * * | * ~Открыть * * | * Запусти * * | * Активируй * * | * Открой * *) (Знаток Онлайн | знаток онлайн | викторину знаток онлайн | викторина знаток онлайн)
 
         if: $request.rawRequest.payload.character.name === "Джой"
@@ -20,13 +20,13 @@ theme: /
     state: StartGame
         q!: * (начать игру | поиграем | давай играть) *
 
+        script:
+            start_game($context);
+
         if: $request.rawRequest.payload.character.name === "Джой"
             a: Начинаем! Отвечай на вопросы текстом или голосом. Скажи «Ответ» и свой вариант.
         else:
             a: Начинаем! Отвечайте на вопросы текстом или голосом. Скажите «Ответ» и свой вариант.
-
-        script:
-            start_game($context);
 
     state: Help
         q!: * (*помощь* | умееш* | можеш* | помог* | подска*) *
@@ -74,51 +74,27 @@ theme: /
     state: RestartGame
         q!: (*начать заново* | *новая игра* | *ещё раз* | *рестарт*)
 
+        script:
+            restart_game($context);
+
         if: $request.rawRequest.payload.character.name === "Джой"
             a: Начинаем новую игру!
         else:
             a: Начинаем новую игру!
 
-        script:
-            restart_game($context);
-
     state: ReadAnswer
         event!: read
 
         script:
-            var value = "";
-            var serverAction = $request.payload.data && $request.payload.data.server_action;
-            if (serverAction && serverAction.parameters) {
-                value = serverAction.parameters.value || "";
-            }
-            if (!value) {
-                var eventData = $context && $context.request && $context.request.data && $context.request.data.eventData;
-                if (eventData) {
-                    value = eventData.value || "";
-                }
-            }
-            if (value) {
-                $reactions.answer(value);
-            }
+            var eventData = $context && $context.request && $context.request.data && $context.request.data.eventData || {};
+            $reactions.answer({ value: eventData.value });
 
     state: ReadQuestionText
         event!: read_q
 
         script:
-            var value = "";
-            var serverAction = $request.payload.data && $request.payload.data.server_action;
-            if (serverAction && serverAction.parameters) {
-                value = serverAction.parameters.value || "";
-            }
-            if (!value) {
-                var eventData = $context && $context.request && $context.request.data && $context.request.data.eventData;
-                if (eventData) {
-                    value = eventData.value || "";
-                }
-            }
-            if (value) {
-                $reactions.answer(value);
-            }
+            var eventData = $context && $context.request && $context.request.data && $context.request.data.eventData || {};
+            $reactions.answer({ value: eventData.value });
 
     state: Fallback
         event!: noMatch

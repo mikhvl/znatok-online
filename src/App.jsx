@@ -299,7 +299,6 @@ function App() {
     const performCheck = (silent = false) => {
         const { currentQuestion, userAnswer, isAnswered } = stateRef.current;
         if (!currentQuestion || isAnswered) return null;
-        if (!userAnswer.trim()) return null;
 
         const normalizedUser = userAnswer.trim().toLowerCase().replace(/[.,!?;]$/, '');
         const isCorrect = currentQuestion.correctAnswers.some(
@@ -372,13 +371,6 @@ function App() {
     const handleAction = (action) => {
         if (!action) return;
         const actionType = action.type || action.action_id;
-
-        // Handle item_selector voice selection
-        if (actionType === 'selected_item') {
-            handleSelectedItem(action.selected_item || action);
-            return;
-        }
-
         switch (actionType) {
             case 'start_game':
             case 'restart_game':
@@ -394,6 +386,7 @@ function App() {
                 nextQuestion();
                 break;
             case 'read_question':
+                // Frontend sends question text to backend for TTS via event!: read_q
                 readQuestion();
                 break;
             case 'end_game':
@@ -403,38 +396,6 @@ function App() {
                 setHelpVisible(true);
                 break;
             default:
-                console.warn('Unknown action type:', actionType, action);
-                break;
-        }
-    };
-
-    // Map item_selector titles to actions
-    const handleSelectedItem = (item) => {
-        const title = (item.title || '').toLowerCase().trim();
-        switch (title) {
-            case 'начать игру':
-                startNewGame();
-                break;
-            case 'начать заново':
-                startNewGame();
-                break;
-            case 'помощь':
-                setHelpVisible(true);
-                break;
-            case 'прочитать вопрос':
-                readQuestion();
-                break;
-            case 'проверить ответ':
-                checkAnswer();
-                break;
-            case 'следующий вопрос':
-                nextQuestion();
-                break;
-            case 'закончить игру':
-                endGame();
-                break;
-            default:
-                console.warn('Unknown selected_item:', title);
                 break;
         }
     };
@@ -478,31 +439,25 @@ function App() {
     handlerRef.current = (event) => {
         console.log('assistant.on(data)', event);
 
-        // Handle navigation commands separately
+        if (event.type === 'character') {
+            return;
+        }
+        if (event.type === 'insets') {
+            return;
+        }
         if (event.type === 'navigation') {
             handleNavigation(event.navigation?.command);
             return;
         }
-
-        // Handle smart app errors
         if (event.type === 'smart_app_error') {
-            console.error('Smart app error:', event.smart_app_error);
+            handleError(event);
             return;
         }
 
-        // Handle smart app commands (actions from backend scenario)
-        if (event.type === 'smart_app_command') {
-            const action = event.smart_app_command;
-            if (action) {
-                handleAction(action);
-            }
-            return;
-        }
-
-        // Handle server actions sent via sendData response
-        const serverAction = event.action;
-        if (serverAction) {
-            handleAction(serverAction);
+        // Smart app commands: action is directly on the event object
+        // (matching the @salutejs/client protocol used in the reference examples)
+        if (event.action) {
+            handleAction(event.action);
         }
     };
 
