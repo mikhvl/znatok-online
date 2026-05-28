@@ -23,11 +23,6 @@ theme: /
         script:
             start_game($context);
 
-        if: $request.rawRequest.payload.character.name === "Джой"
-            a: Начинаем! Отвечай на вопросы текстом или голосом. Скажи «Ответ» и свой вариант.
-        else:
-            a: Начинаем! Отвечайте на вопросы текстом или голосом. Скажите «Ответ» и свой вариант.
-
     state: Help
         q!: * (*помощь* | умееш* | можеш* | помог* | подска*) *
 
@@ -76,11 +71,6 @@ theme: /
 
         script:
             restart_game($context);
-
-        if: $request.rawRequest.payload.character.name === "Джой"
-            a: Начинаем новую игру!
-        else:
-            a: Начинаем новую игру!
 
     state: ReadAnswer
         event!: read
