@@ -1,7 +1,7 @@
 {
   "name": "znatok-smartapp",
   "version": "1.0.0",
-  "homepage": "https://mikhvl.github.io/znatok-online/",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@salutejs/client": "^1.37.1",
