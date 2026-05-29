@@ -1,7 +1,7 @@
 {
   "name": "znatok-smartapp",
   "version": "1.0.0",
-  "homepage": "znatok-online",
+  "homepage": "https://mikhvl.github.io/znatok-online/",
   "private": true,
   "dependencies": {
     "@salutejs/client": "^1.37.1",
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "predeploy": "yarn build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d build --remote origin",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
