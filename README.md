@@ -20,10 +20,10 @@
 
 ```env
 REACT_APP_SMARTAPP="Знаток Онлайн - Викторина"
-REACT_APP_TOKEN=<ваш_токен_из_SaluteStudio>
+REACT_APP_TOKEN=<ваш_токен_из_SmartAppStudio>
 ```
 
-Токен можно получить в [SaluteStudio](https://salute.sber.ru/) в настройках проекта.
+Токен можно получить в [SmartApp Studio](https://developers.sber.ru/studio/) в настройках сервисов в профиле.
 
 ### Сборка и запуск
 
