@@ -3,6 +3,12 @@ import { initializeAssistant } from './utils/assistant';
 import styled, { css } from 'styled-components';
 import questionsData from './questions.json';
 
+/* ─── Responsive breakpoints ─── */
+/*  Phone:   < 768px   (base)                */
+/*  Tablet:  768–1024px                       */
+/*  Desktop: 1024–1920px                      */
+/*  TV:      > 1920px                         */
+
 /* ─── Styled Components ─── */
 
 const GlobalStyle = styled.div`
@@ -10,25 +16,30 @@ const GlobalStyle = styled.div`
     background: linear-gradient(135deg, #1e2a3a 0%, #0f1724 100%);
     color: #f0f0f0;
     font-family: 'Segoe UI', 'Arial', sans-serif;
-    padding: 20px;
+    padding: clamp(12px, 2vw, 40px);
+    box-sizing: border-box;
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
 `;
 
 const QuizContainer = styled.div`
-    max-width: 800px;
+    max-width: clamp(340px, 90vw, 1200px);
     margin: 0 auto;
     background: rgba(0, 0, 0, 0.5);
-    border-radius: 32px;
-    padding: 30px 20px;
+    border-radius: clamp(20px, 3vw, 48px);
+    padding: clamp(20px, 3vw, 60px);
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 clamp(4px, 1vw, 16px) clamp(16px, 3vw, 64px) rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: clamp(16px, 2.5vw, 40px);
 `;
 
 const Title = styled.h1`
     text-align: center;
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 4.5vw, 4.5rem);
     margin: 0;
     background: linear-gradient(135deg, #ffd89b, #c7e9fb);
     -webkit-background-clip: text;
@@ -37,22 +48,19 @@ const Title = styled.h1`
 `;
 
 const QuestionText = styled.div`
-    font-size: 1.8rem;
+    font-size: clamp(1.15rem, 2.8vw, 3rem);
     font-weight: bold;
     line-height: 1.4;
     text-align: center;
-    padding: 20px;
+    padding: clamp(14px, 2vw, 40px);
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    @media (max-width: 768px) {
-        font-size: 1.3rem;
-    }
+    border-radius: clamp(16px, 2.5vw, 36px);
 `;
 
 const StyledInput = styled.input`
     width: 100%;
-    padding: 16px;
-    font-size: 1.2rem;
+    padding: clamp(12px, 1.8vw, 28px);
+    font-size: clamp(1rem, 2vw, 2rem);
     border-radius: 48px;
     border: none;
     background: #2d3e4f;
@@ -70,14 +78,14 @@ const StyledInput = styled.input`
 const ButtonGroup = styled.div`
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: clamp(10px, 1.5vw, 24px);
     justify-content: center;
 `;
 
 // Use transient prop $primary to avoid DOM warning
 const Button = styled.button`
-    padding: 12px 24px;
-    font-size: 1rem;
+    padding: clamp(10px, 1.5vw, 24px) clamp(20px, 3vw, 48px);
+    font-size: clamp(0.9rem, 1.8vw, 1.8rem);
     border: none;
     border-radius: 48px;
     background: ${(p) => (p.$primary ? '#ff8c42' : '#3a5a6e')};
@@ -97,9 +105,9 @@ const Button = styled.button`
 
 const Feedback = styled.div`
     background: rgba(0, 0, 0, 0.6);
-    padding: 16px;
-    border-radius: 24px;
-    font-size: 1rem;
+    padding: clamp(12px, 1.8vw, 28px);
+    border-radius: clamp(16px, 2vw, 32px);
+    font-size: clamp(0.9rem, 1.8vw, 1.8rem);
     line-height: 1.4;
 `;
 
@@ -107,7 +115,7 @@ const ProgressBarContainer = styled.div`
     width: 100%;
     background: #2d3e4f;
     border-radius: 24px;
-    height: 12px;
+    height: clamp(8px, 1.2vw, 20px);
     overflow: hidden;
 `;
 
@@ -120,13 +128,13 @@ const ProgressFill = styled.div`
 
 const ScoreText = styled.div`
     text-align: center;
-    font-size: 1.2rem;
+    font-size: clamp(1.1rem, 2.5vw, 2.5rem);
     font-weight: bold;
 `;
 
 const VoiceHint = styled.div`
     text-align: center;
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 1.4vw, 1.4rem);
     color: #8aaec0;
     font-style: italic;
 `;
@@ -142,39 +150,42 @@ const HelpOverlay = styled.div`
     align-items: center;
     justify-content: center;
     z-index: 100;
-    padding: 20px;
+    padding: clamp(12px, 2vw, 40px);
 `;
 
 const HelpContent = styled.div`
     background: #1e2a3a;
-    border-radius: 24px;
-    padding: 30px;
-    max-width: 500px;
+    border-radius: clamp(16px, 2.5vw, 40px);
+    padding: clamp(20px, 3vw, 60px);
+    max-width: clamp(300px, 85vw, 800px);
     width: 100%;
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
 
     h2 {
         margin-top: 0;
         text-align: center;
         color: #ffd89b;
+        font-size: clamp(1.4rem, 3vw, 3rem);
     }
 
     h3 {
         color: #c7e9fb;
         margin-bottom: 8px;
+        font-size: clamp(1rem, 2vw, 2rem);
     }
 
     ul {
         line-height: 2;
-        padding-left: 20px;
+        padding-left: clamp(16px, 2vw, 32px);
+        font-size: clamp(0.85rem, 1.6vw, 1.6rem);
     }
 
     code {
         background: rgba(255, 255, 255, 0.1);
         padding: 2px 8px;
         border-radius: 6px;
-        font-size: 0.95rem;
+        font-size: clamp(0.8rem, 1.4vw, 1.4rem);
     }
 `;
 
