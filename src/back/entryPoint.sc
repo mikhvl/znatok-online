@@ -67,7 +67,7 @@ theme: /
             end_game($context);
 
     state: RestartGame
-        q!: (*начать заново* | *новая игра* | *ещё раз* | *рестарт*)
+        q!: (*начать заново* | *новая игра* | *ещё раз* | *рестарт* | *заново*)
 
         script:
             restart_game($context);
