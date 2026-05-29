@@ -437,27 +437,33 @@ function App() {
 
     const handlerRef = useRef(null);
     handlerRef.current = (event) => {
-        console.log('assistant.on(data)', event);
+        try {
+            if (!event || !event.type) return;
 
-        if (event.type === 'character') {
-            return;
-        }
-        if (event.type === 'insets') {
-            return;
-        }
-        if (event.type === 'navigation') {
-            handleNavigation(event.navigation?.command);
-            return;
-        }
-        if (event.type === 'smart_app_error') {
-            handleError(event);
-            return;
-        }
+            console.log('assistant.on(data)', event);
 
-        // Smart app commands: action is directly on the event object
-        // (matching the @salutejs/client protocol used in the reference examples)
-        if (event.action) {
-            handleAction(event.action);
+            if (event.type === 'character') {
+                return;
+            }
+            if (event.type === 'insets') {
+                return;
+            }
+            if (event.type === 'navigation') {
+                handleNavigation(event.navigation?.command);
+                return;
+            }
+            if (event.type === 'smart_app_error') {
+                handleError(event);
+                return;
+            }
+
+            // Smart app commands: action is directly on the event object
+            // (matching the @salutejs/client protocol used in the reference examples)
+            if (event.action) {
+                handleAction(event.action);
+            }
+        } catch (err) {
+            console.error('Error handling assistant data event:', err);
         }
     };
 
