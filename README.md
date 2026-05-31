@@ -39,6 +39,7 @@ yarn start
 ## Деплой на GitHub Pages
 
 ```bash
+gh auth login
 yarn deploy
 ```
 
